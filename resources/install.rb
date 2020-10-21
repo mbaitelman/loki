@@ -20,7 +20,6 @@ action :install do
 
   source_file = "loki-#{node['os']}-amd64" # #{node['kernel']['machine']}
   source_url = "https://github.com/grafana/loki/releases/download/#{source_version}/#{source_file}.zip"
-  local_file = 'loki.zip'
 
   package 'unzip'
 
