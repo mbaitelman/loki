@@ -23,6 +23,6 @@ platforms:
   - name: amazonlinux-2
 
 suites:
-  - name: default
+  - name: install
     run_list:
       - recipe[test::install]
