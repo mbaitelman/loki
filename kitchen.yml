@@ -1,46 +1,28 @@
-<% require 'date' %>
 ---
-driver:
-  name: ec2
-  shared_credentials_profile: 'test-kitchen'
-  region: us-west-2
-  availability_zone: b
-  skip_cost_warning: true #Ignore the fact that this may cost money
-  spot_price: 0.06
-  retryable_tries: 180
-  instance_type: t3.large
-  security_group_ids: sg-0a1845ddd8a9b1e4f
-  subnet_id: subnet-0a76dec66e9382db8 # prdg-qa-usw2-nat-b aws6
-  #subnet_id: subnet-0aa69a1ad023bed70 # prdg-qa-usw2-igw-b aws6
-  tags:
-    Name: 'test-kitchen'
-    Product: 'Prodege'
-    Environment: 'QA'
-    ServerType: 'Application'
-    Class: 'Low'
-    created-by: 'test-kitchen'
-    created-at: <%= DateTime.now.strftime("%Y/%m/%d %H:%M") %>
-    running-on: <%= Socket.gethostname %>
-provisioner:
-  product_name: chef
-  product_version: 14.12.9
-  name: chef_zero
-  log_level: info
-  retry_on_exit_code: [259, 35, 235] # the exit code signaling that the node is rebooting https://kitchen.ci/docs/reference/reboots/
-  wait_for_retry: 30 # adjusting from 100 to 300.
-  max_retries: 6
-  client_rb:
-    exit_status: :enabled # Opt-in to the standardized exit codes
-    client_fork: false  # Forked instances don't return the real exit code
-    chef_license: accept
-
-verifier:
-  name: inspec
-
-platforms:
-  - name: ubuntu-18.04
-
-suites:
-  - name: default
-    run_list:
-      - recipe[test::install]
+    driver:
+      name: vagrant
+    
+    provisioner:
+      name: chef_zero
+      product_name: chef
+      product_version: <%= ENV['CHEF_VERSION'] || 'latest' %>
+      install_strategy: once
+    
+    client_rb:
+      treat_deprecation_warnings_as_errors: true
+    verifier:
+      name: inspec
+    
+    platforms:
+      - name: debian-9
+      - name: debian-10
+      - name: ubuntu-18.04
+      - name: ubuntu-20.04
+      - name: centos-7
+      - name: centos-8
+      - name: amazonlinux-2
+    
+    suites:
+      - name: default
+        run_list:
+          - recipe[test::install]
