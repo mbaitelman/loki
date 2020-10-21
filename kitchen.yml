@@ -1,32 +1,46 @@
+<% require 'date' %>
 ---
 driver:
-  name: vagrant
-
-## The forwarded_port port feature lets you connect to ports on the VM guest via
-## localhost on the host.
-## see also: https://www.vagrantup.com/docs/networking/forwarded_ports.html
-
-#  network:
-#    - ["forwarded_port", {guest: 80, host: 8080}]
-
+  name: ec2
+  shared_credentials_profile: 'test-kitchen'
+  region: us-west-2
+  availability_zone: b
+  skip_cost_warning: true #Ignore the fact that this may cost money
+  spot_price: 0.06
+  retryable_tries: 180
+  instance_type: t3.large
+  security_group_ids: sg-0a1845ddd8a9b1e4f
+  subnet_id: subnet-0a76dec66e9382db8 # prdg-qa-usw2-nat-b aws6
+  #subnet_id: subnet-0aa69a1ad023bed70 # prdg-qa-usw2-igw-b aws6
+  tags:
+    Name: 'test-kitchen'
+    Product: 'Prodege'
+    Environment: 'QA'
+    ServerType: 'Application'
+    Class: 'Low'
+    created-by: 'test-kitchen'
+    created-at: <%= DateTime.now.strftime("%Y/%m/%d %H:%M") %>
+    running-on: <%= Socket.gethostname %>
 provisioner:
+  product_name: chef
+  product_version: 14.12.9
   name: chef_zero
-
-  ## product_name and product_version specifies a specific Chef product and version to install.
-  ## see the Chef documentation for more details: https://docs.chef.io/workstation/config_yml_kitchen/
-  #  product_name: chef
-  #  product_version: 16
+  log_level: info
+  retry_on_exit_code: [259, 35, 235] # the exit code signaling that the node is rebooting https://kitchen.ci/docs/reference/reboots/
+  wait_for_retry: 30 # adjusting from 100 to 300.
+  max_retries: 6
+  client_rb:
+    exit_status: :enabled # Opt-in to the standardized exit codes
+    client_fork: false  # Forked instances don't return the real exit code
+    chef_license: accept
 
 verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-20.04
-  - name: centos-8
+  - name: ubuntu-18.04
 
 suites:
   - name: default
-    verifier:
-      inspec_tests:
-        - test/integration/default
-    attributes:
+    run_list:
+      - recipe[test::install]

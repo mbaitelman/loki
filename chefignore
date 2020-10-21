@@ -66,7 +66,7 @@ mlc_config.json
 Procfile
 Rakefile
 spec/*
-test/*
+#test/*
 
 # SCM #
 #######
