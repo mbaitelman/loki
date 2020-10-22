@@ -28,4 +28,4 @@ suites:
       - recipe[test::install]
   - name: install_promtail
     run_list:
-      - recipe[test::install_promtail]      
+      - recipe[test::install_promtail]
