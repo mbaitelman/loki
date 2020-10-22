@@ -49,6 +49,7 @@ jobs:
           - 'ubuntu-2004'
         suite:
           - 'install'
+          - 'install_promtail'
       fail-fast: false
 
     steps:
