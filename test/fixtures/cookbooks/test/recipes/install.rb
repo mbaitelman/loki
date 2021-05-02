@@ -1,6 +1,6 @@
 
 loki_install 'Loki install' do
-  version 'v1.6.1'
+  version 'v2.2.1'
 end
 
 loki_config 'Loki config'
