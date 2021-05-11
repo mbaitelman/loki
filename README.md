@@ -4,7 +4,6 @@
 
 This cookbook provides a complete installation and configuration of Loki with Promtail. This includes the ability to manage configuration with Chef via Custom Resources.
 
-
 ## Resources
 
 - [loki_install](/documentation/loki_install.md)
